@@ -37,16 +37,16 @@ const Header = () => {
 
   return (
     <header className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-  {/* Left Section: Date and Page Title */}
-  <div className="flex items-center gap-10">
-    {/* Page Title */}
-    <h1 className="text-2xl font-semibold text-gray-800 tracking-wide">
-      {getPageTitle()}
-    </h1>
+      {/* Left Section: Date and Page Title */}
+      <div className="flex items-center gap-10">
+        {/* Page Title */}
+        <h1 className="text-2xl font-semibold text-gray-800 tracking-wide">
+          {getPageTitle()}
+        </h1>
 
-    {/* Date */}
-    <div className="text-gray-600 text-base font-medium">{today}</div>
-  </div>
+        {/* Date */}
+        <div className="text-gray-600 text-base font-medium">{today}</div>
+      </div>
 
 
       {/* Icons */}
