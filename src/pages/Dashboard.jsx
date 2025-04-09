@@ -77,6 +77,13 @@ function Dashboard() {
     currentPage * rowsPerPage
   );
 
+  const today = new Date();
+  const todayString = today.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
@@ -86,8 +93,8 @@ function Dashboard() {
           <FilterBar setFilters={setFilters} fetchData={fetchData} />
 
           {/* Charts section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Chart title="Today's Trend" data={todayData} xAxisKey="hour" />
+          <div className=" grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Chart title={`Today's Trend : ${todayString}`} data={todayData} xAxisKey="hour" />
             <Chart title="Monthly Overview" data={monthlyData} xAxisKey="month" />
           </div>
 
