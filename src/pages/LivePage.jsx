@@ -35,12 +35,26 @@ const data = [
 const LivePage = () => {
   const tableRef = useRef(null);
   const [copied, setCopied] = useState(false);
-  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState({
+    domain: "",
+    process: "",
+    goLive: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+
+  const handleSearch = () => {
+    // You can implement filter logic here
+    console.log("Searching with:", filters);
+  };
 
   const handleCopy = () => {
-    const text = data.map((row) =>
-      Object.values(row).join("\t")
-    ).join("\n");
+    const text = data
+      .map((row) => Object.values(row).join("\t"))
+      .join("\n");
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -89,48 +103,82 @@ const LivePage = () => {
     doc.save("LiveData.pdf");
   };
 
-  const filteredData = data.filter((item) =>
-    Object.values(item).some((val) =>
-      val.toLowerCase().includes(search.toLowerCase())
-    )
-  );
-
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
       <div className="flex flex-col flex-1">
         <Header />
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-blue-900 mb-4">Live Automations</h1>
-
-          {/* Export Buttons and Search */}
-          <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-            <div className="flex gap-2 flex-wrap">
-              <button
-                onClick={handleCopy}
-                className={`px-4 py-2 rounded-md transition-all duration-300 ${
-                  copied ? "bg-blue-600 text-white" : "bg-indigo-500 text-white hover:bg-indigo-600"
-                }`}
-              >
-                {copied ? "Copied" : "Copy"}
-              </button>
-              <button onClick={handleExportExcel} className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">
-                Excel
-              </button>
-              <button onClick={handleExportCSV} className="bg-slate-500 text-white px-4 py-2 rounded-md hover:bg-slate-600">
-                CSV
-              </button>
-              <button onClick={handleExportPDF} className="bg-rose-400 text-white px-4 py-2 rounded-md hover:bg-rose-500">
-                PDF
-              </button>
+          {/* Search Inputs Row */}
+          <div className="flex items-end flex-wrap gap-4 mb-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">
+                Domain Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="domain"
+                placeholder="Enter Domain Name"
+                value={filters.domain}
+                onChange={handleInputChange}
+                className="border rounded-md px-4 py-2 w-56"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search"
-              className="p-2 border rounded-md w-60"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">
+                Process Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="process"
+                placeholder="Enter Process Name"
+                value={filters.process}
+                onChange={handleInputChange}
+                className="border rounded-md px-4 py-2 w-56"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">
+                Go Live Date <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                name="goLive"
+                value={filters.goLive}
+                onChange={handleInputChange}
+                className="border rounded-md px-4 py-2 w-56"
+              />
+            </div>
+
+            <button
+              onClick={handleSearch}
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+            >
+              Search
+            </button>
+          </div>
+
+          {/* Export Buttons */}
+          <div className="flex gap-2 flex-wrap mb-4">
+            <button
+              onClick={handleCopy}
+              className={`px-4 py-2 rounded-md transition-all duration-300 ${
+                copied ? "bg-blue-600 text-white" : "bg-indigo-500 text-white hover:bg-indigo-600"
+              }`}
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+            <button onClick={handleExportExcel} className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">
+              Excel
+            </button>
+            <button onClick={handleExportCSV} className="bg-slate-500 text-white px-4 py-2 rounded-md hover:bg-slate-600">
+              CSV
+            </button>
+            <button onClick={handleExportPDF} className="bg-rose-400 text-white px-4 py-2 rounded-md hover:bg-rose-500">
+              PDF
+            </button>
           </div>
 
           {/* Table */}
@@ -147,7 +195,7 @@ const LivePage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredData.map((item, idx) => (
+                {data.map((item, idx) => (
                   <tr key={idx} className="hover:bg-gray-100">
                     <td className="px-6 py-4">{item.process}</td>
                     <td className="px-6 py-4">{item.nlt}</td>

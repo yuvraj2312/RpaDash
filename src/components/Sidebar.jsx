@@ -1,21 +1,38 @@
 import React from "react";
-import { FaChartBar, FaPlus, FaRocket, FaChartLine, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaChartBar,
+  FaPlus,
+  FaRocket,
+  FaChartLine,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import AirtelLogo from "../assets/airtel-logo.png"; // Ensure the correct path & extension
 
 const Sidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Optionally clear auth/session here
     navigate("/login");
   };
 
   return (
     <div className="w-64 bg-blue-900 text-white flex flex-col justify-between p-4 min-h-screen">
+      {/* Logo and Title */}
       <div>
-        <div className="text-2xl font-bold mb-10 tracking-wide">
-          INTELLIGENT AUTOMATION
+        <div className="flex items-center gap-3 mb-10">
+        <img
+          src={AirtelLogo}
+          alt="Airtel Logo"
+          className="h-14 w-14 object-contain transition-transform duration-300 hover:scale-105"
+        />
+
+          <span className="text-xl font-bold tracking-wide leading-tight">
+            INTELLIGENT <br /> AUTOMATION
+          </span>
         </div>
+
+        {/* Navigation */}
         <nav className="space-y-6 text-lg">
           <Link to="/" className="flex items-center gap-3 hover:text-blue-300 transition">
             <FaChartBar className="text-xl" /> Statistics
