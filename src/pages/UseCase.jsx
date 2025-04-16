@@ -1,6 +1,6 @@
 import React from "react";
-import Sidebar from "../components/Sidebar"; // adjust path if needed
-import Header from "../components/Header";   // make sure this exists
+import Sidebar from "../components/Sidebar"; 
+import Header from "../components/Header";   
 
 const UseCase = () => {
   return (

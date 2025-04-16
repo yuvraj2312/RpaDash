@@ -37,7 +37,6 @@ const LivePage = () => {
   const [copied, setCopied] = useState(false);
   const [filters, setFilters] = useState({
     domain: "",
-    process: "",
     goLive: "",
   });
 
@@ -125,20 +124,7 @@ const LivePage = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">
-                Process Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="process"
-                placeholder="Enter Process Name"
-                value={filters.process}
-                onChange={handleInputChange}
-                className="border rounded-md px-4 py-2 w-56"
-              />
-            </div>
-
+        
             <div>
               <label className="block text-sm font-semibold text-gray-700">
                 Go Live Date <span className="text-red-500">*</span>
@@ -161,25 +147,34 @@ const LivePage = () => {
           </div>
 
           {/* Export Buttons */}
-          <div className="flex gap-2 flex-wrap mb-4">
-            <button
-              onClick={handleCopy}
-              className={`px-4 py-2 rounded-md transition-all duration-300 ${
-                copied ? "bg-blue-600 text-white" : "bg-indigo-500 text-white hover:bg-indigo-600"
-              }`}
-            >
-              {copied ? "Copied" : "Copy"}
-            </button>
-            <button onClick={handleExportExcel} className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">
-              Excel
-            </button>
-            <button onClick={handleExportCSV} className="bg-slate-500 text-white px-4 py-2 rounded-md hover:bg-slate-600">
-              CSV
-            </button>
-            <button onClick={handleExportPDF} className="bg-rose-400 text-white px-4 py-2 rounded-md hover:bg-rose-500">
-              PDF
-            </button>
+          <div className="flex justify-between items-center flex-wrap mb-4">
+            <div className="flex gap-2 flex-wrap ">
+              <button
+                onClick={handleCopy}
+                className={`px-4 py-2 rounded-md transition-all duration-300 ${
+                  copied ? "bg-blue-600 text-white" : "bg-indigo-500 text-white hover:bg-indigo-600"
+                }`}
+              >
+                {copied ? "Copied" : "Copy"}
+              </button>
+              <button onClick={handleExportExcel} className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">
+                Excel
+              </button>
+              <button onClick={handleExportCSV} className="bg-slate-500 text-white px-4 py-2 rounded-md hover:bg-slate-600">
+                CSV
+              </button>
+              <button onClick={handleExportPDF} className="bg-rose-400 text-white px-4 py-2 rounded-md hover:bg-rose-500">
+                PDF
+              </button>
+
+            </div>
+            <div className="ml-auto text-lg font-semibold text-gray-700">
+                Total Live Processes: {data.length}
+            </div>
           </div>
+            
+
+          
 
           {/* Table */}
           <div className="overflow-x-auto bg-white rounded-lg shadow">

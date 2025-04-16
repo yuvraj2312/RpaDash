@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaBell, FaUserCircle } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 
 const Header = () => {
@@ -51,16 +51,7 @@ const Header = () => {
 
       {/* Icons */}
       <div className="relative flex items-center gap-4" ref={profileRef}>
-        {/* Notification */}
-        <button
-          className="relative hover:text-blue-600 transition-colors"
-          title="Notifications"
-        >
-          <FaBell className="text-xl text-gray-600" />
-          <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] px-1.5 py-[1px] rounded-full">
-            3
-          </span>
-        </button>
+        
 
         {/* User Profile */}
         <div className="relative">

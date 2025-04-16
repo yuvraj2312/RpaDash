@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import FilterBar from "../components/Filterbar";
-import Chart from "../components/Chart";
+// import Chart from "../components/Chart";
+import EnhancedChart from "../components/EnhancedChart";
 import { CSVLink } from "react-csv";
 
 // Dummy data
@@ -41,7 +42,6 @@ const allColumns = [
   { key: "processName", label: "Process Name" },
   { key: "processOwner", label: "Process Owner" },
   { key: "jiraId", label: "Jira ID" },
-  { key: "date", label: "Date" },
   { key: "processType", label: "Process Type" },
   { key: "status", label: "Status" },
   { key: "volume", label: "Volume Processed" },
@@ -54,12 +54,13 @@ const allColumns = [
 ];
 
 function Dashboard() {
-  const [filters, setFilters] = useState({});
-  const [visibleColumns, setVisibleColumns] = useState(
-    allColumns.map((col) => col.key)
-  );
+  const [visibleColumns, setVisibleColumns] = useState(allColumns.map((col) => col.key));
   const [currentPage, setCurrentPage] = useState(1);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const rowsPerPage = 10;
+  const totalPages = Math.ceil(dummyTableData.length / rowsPerPage);
+  const currentData = dummyTableData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const toggleColumn = (key) => {
     setVisibleColumns((prev) =>
@@ -67,22 +68,15 @@ function Dashboard() {
     );
   };
 
-  const fetchData = () => {
-    // Static for now
-  };
-
-  const totalPages = Math.ceil(dummyTableData.length / rowsPerPage);
-  const currentData = dummyTableData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
-
-  const today = new Date();
-  const todayString = today.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -90,54 +84,151 @@ function Dashboard() {
       <div className="flex flex-col flex-1 overflow-auto">
         <Header />
         <div className="p-4 space-y-6">
-          <FilterBar setFilters={setFilters} fetchData={fetchData} />
-
-          {/* Charts section */}
-          <div className=" grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Chart title={`Today's Trend : ${todayString}`} data={todayData} xAxisKey="hour" />
-            <Chart title="Monthly Overview" data={monthlyData} xAxisKey="month" />
+          <FilterBar setFilters={() => {}} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <EnhancedChart title={`Today's Trend`} data={todayData} xAxisKey="hour" />
+            <EnhancedChart title="Monthly Overview" data={monthlyData} xAxisKey="month" />
           </div>
 
-          {/* Table section */}
-          <div className="bg-white p-4 rounded shadow">
-            <div className="mb-4 flex justify-between items-center flex-wrap gap-2">
-              <div className="flex flex-wrap gap-2">
-                {allColumns.map((col) => (
-                  <label key={col.key} className="text-sm">
-                    <input
-                      type="checkbox"
-                      checked={visibleColumns.includes(col.key)}
-                      onChange={() => toggleColumn(col.key)}
-                      className="mr-1"
-                    />
-                    {col.label}
-                  </label>
-                ))}
-              </div>
 
+          <div className="bg-white p-4 rounded shadow">
+            <div className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    let text = visibleColumns
+                      .map((key) => allColumns.find((col) => col.key === key).label)
+                      .join("\t") + "\n";
+                    currentData.forEach((row) => {
+                      text += visibleColumns
+                        .map((key) => {
+                          if (key === "startTime" || key === "endTime") {
+                            return `${row.date} ${row[key]}`;
+                          }
+                          return row[key];
+                        })
+                        .join("\t") + "\n";
+                    });
+                    navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+                  }}
+                  className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+                >
+                  Copy
+                </button>
+
                 <CSVLink
-                  data={dummyTableData}
-                  filename={"dashboard_data.csv"}
+                  data={dummyTableData.map((row) => {
+                    const newRow = {};
+                    visibleColumns.forEach((key) => {
+                      newRow[key] =
+                        key === "startTime" || key === "endTime"
+                          ? `${row.date} ${row[key]}`
+                          : row[key];
+                    });
+                    return newRow;
+                  })}
+                  filename="dashboard_data.csv"
                   className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm"
                 >
-                  Export CSV
+                  CSV
                 </CSVLink>
+
+                <button
+                  onClick={async () => {
+                    const XLSX = await import("xlsx");
+                    const ws = XLSX.utils.json_to_sheet(
+                      currentData.map((row) => {
+                        const newRow = {};
+                        visibleColumns.forEach((key) => {
+                          newRow[key] =
+                            key === "startTime" || key === "endTime"
+                              ? `${row.date} ${row[key]}`
+                              : row[key];
+                        });
+                        return newRow;
+                      })
+                    );
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "Dashboard Data");
+                    XLSX.writeFile(wb, "dashboard_data.xlsx");
+                  }}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm"
+                >
+                  Excel
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const jsPDF = (await import("jspdf")).default;
+                    const autoTable = (await import("jspdf-autotable")).default;
+                    const doc = new jsPDF();
+                    const headers = visibleColumns.map((key) =>
+                      allColumns.find((col) => col.key === key).label
+                    );
+                    const body = currentData.map((row) =>
+                      visibleColumns.map((key) =>
+                        key === "startTime" || key === "endTime"
+                          ? `${row.date} ${row[key]}`
+                          : row[key]
+                      )
+                    );
+                    autoTable(doc, {
+                      head: [headers],
+                      body,
+                    });
+                    doc.save("dashboard_data.pdf");
+                  }}
+                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm"
+                >
+                  PDF
+                </button>
+              </div>
+
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                  className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm flex items-center"
+                >
+                  Column Visibility
+                  <span
+                    className={`ml-2 transform transition-transform duration-200 ${
+                      dropdownOpen ? "rotate-180" : "rotate-0"
+                    }`}
+                  >
+                    ▼
+                  </span>
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 bg-white border mt-1 shadow rounded z-10 max-h-60 overflow-y-auto w-48">
+                    {allColumns
+                      .filter((col) => col.key !== "date")
+                      .map((col) => (
+                        <label
+                          key={col.key}
+                          className="block px-4 py-1 text-sm hover:bg-gray-100 cursor-pointer whitespace-nowrap"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={visibleColumns.includes(col.key)}
+                            onChange={() => toggleColumn(col.key)}
+                            className="mr-1"
+                          />
+                          {col.label}
+                        </label>
+                      ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Table */}
             <div className="overflow-auto">
               <table className="min-w-full text-sm border border-gray-300">
                 <thead className="bg-gray-200">
                   <tr>
                     {allColumns
-                      .filter((col) => visibleColumns.includes(col.key))
+                      .filter((col) => col.key !== "date" && visibleColumns.includes(col.key))
                       .map((col) => (
-                        <th
-                          key={col.key}
-                          className="px-2 py-2 border border-gray-300 text-left"
-                        >
+                        <th key={col.key} className="px-2 py-2 border border-gray-300 text-left">
                           {col.label}
                         </th>
                       ))}
@@ -147,13 +238,12 @@ function Dashboard() {
                   {currentData.map((row, i) => (
                     <tr key={i} className="even:bg-gray-50">
                       {allColumns
-                        .filter((col) => visibleColumns.includes(col.key))
+                        .filter((col) => col.key !== "date" && visibleColumns.includes(col.key))
                         .map((col) => (
-                          <td
-                            key={col.key}
-                            className="px-2 py-2 border border-gray-300"
-                          >
-                            {row[col.key]}
+                          <td key={col.key} className="px-2 py-2 border border-gray-300">
+                            {(col.key === "startTime" || col.key === "endTime")
+                              ? `${row.date} ${row[col.key]}`
+                              : row[col.key]}
                           </td>
                         ))}
                     </tr>
@@ -163,7 +253,7 @@ function Dashboard() {
             </div>
 
             {/* Pagination */}
-            <div className="mt-4 flex justify-end items-center gap-2 text-sm">
+            <div className="mt-4 flex justify-center items-center gap-2 text-sm flex-wrap">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -171,9 +261,17 @@ function Dashboard() {
               >
                 Prev
               </button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
+              {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1).map((num) => (
+                <button
+                  key={num}
+                  onClick={() => setCurrentPage(num)}
+                  className={`px-3 py-1 rounded ${
+                    num === currentPage ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
@@ -190,3 +288,7 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+
+
+

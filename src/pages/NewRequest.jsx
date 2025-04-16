@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header"; // Optional
 
@@ -30,16 +30,20 @@ const SelectField = ({ label, options, placeholder, ...props }) => (
 );
 
 const NewRequest = () => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Fixed Sidebar */}
-      <div className="w-64 fixed h-full z-10">
-        <Sidebar />
-      </div>
+      {/* Sidebar */}
+      <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
       {/* Main Content */}
-      <div className="ml-64 flex-1 flex flex-col overflow-y-auto">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${
+          isCollapsed ? "ml-20" : "ml-64"
+        }`}
+      >
         <Header />
+
         <div className="p-6">
           <h1 className="text-3xl font-bold mb-6 text-blue-900">
             Automation Request Form

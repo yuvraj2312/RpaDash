@@ -132,27 +132,28 @@ const AdhocTrigger = () => {
                   />
                 </div>
 
-                {/* File input */}
-                <div>
-                  <label className="block text-sm font-semibold mb-1">
-                    Upload File <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="file"
-                    name="file"
-                    onChange={handleInputChange}
-                    className="w-full border rounded-md px-2 py-2"
-                  />
+                {/* Download Template and Upload File */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                  <div>
+                    <button className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 w-full">
+                      Download Template
+                    </button>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold mb-1">
+                      Upload File <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="file"
+                      name="file"
+                      onChange={handleInputChange}
+                      className="w-full border rounded-md px-2 py-2"
+                    />
+                  </div>
                 </div>
 
-                {/* Buttons */}
-                <div className="flex flex-wrap justify-between items-center gap-4">
-                  <button className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400">
-                    Download Template
-                  </button>
-                  <button className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
-                    Process
-                  </button>
+                {/* Submit Button */}
+                <div className="flex justify-start mt-4">
                   <button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
                     Submit
                   </button>

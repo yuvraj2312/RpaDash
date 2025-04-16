@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaUserAlt, FaIdBadge, FaKey } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import bgLogin from "../assets/bgLogin.jpeg"
 
 const LoginPage = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -26,13 +27,15 @@ const LoginPage = () => {
   };
 
   const handleRegister = () => {
-    // You can store name and olmId in local state or mock backend if needed
     alert("User registered successfully!");
     setIsRegistering(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-4">
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center p-4"
+      style={{ backgroundImage: `url(${bgLogin})` }}
+    >
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
         <h2 className="text-2xl font-bold text-center text-blue-900">
           {isRegistering ? "Register" : "Login"} to RPADash
@@ -67,7 +70,7 @@ const LoginPage = () => {
               Register
             </button>
             <p className="text-sm text-center">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <span
                 onClick={() => setIsRegistering(false)}
                 className="text-blue-700 cursor-pointer hover:underline"
@@ -118,7 +121,7 @@ const LoginPage = () => {
               </>
             )}
             <p className="text-sm text-center">
-              Don’t have an account?{' '}
+              Don’t have an account?{" "}
               <span
                 onClick={() => setIsRegistering(true)}
                 className="text-blue-700 cursor-pointer hover:underline"
