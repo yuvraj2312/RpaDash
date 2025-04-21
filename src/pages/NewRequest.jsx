@@ -153,13 +153,13 @@ const NewRequest = () => {
               options={["Airtel", "Partner"]}
             />
 
-            <InputField label="KPI Indicators / Benefits" type="text" placeholder="Optional" />
+            <InputField label="KPI Indicators / Benefits *" type="text" placeholder="Enter KPI Indicators" />
 
             {/* Submit Button */}
             <div className="md:col-span-2 flex justify-end">
               <button
                 type="submit"
-                className="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition shadow"
+                className="bg-red-700 text-white px-6 py-3 rounded-lg hover:bg-red-800 transition shadow"
               >
                 Submit
               </button>

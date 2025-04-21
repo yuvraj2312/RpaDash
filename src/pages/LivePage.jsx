@@ -140,7 +140,7 @@ const LivePage = () => {
 
             <button
               onClick={handleSearch}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+              className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-700 transition"
             >
               Search
             </button>
@@ -179,7 +179,7 @@ const LivePage = () => {
           {/* Table */}
           <div className="overflow-x-auto bg-white rounded-lg shadow">
             <table className="min-w-full divide-y divide-gray-200 text-sm text-left" ref={tableRef}>
-              <thead className="bg-blue-800 text-white">
+              <thead className="bg-red-500 text-white">
                 <tr>
                   <th className="px-6 py-3">Process Name</th>
                   <th className="px-6 py-3">NLT Name</th>

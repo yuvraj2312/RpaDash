@@ -32,7 +32,7 @@ const FilterBar = ({ setFilters, fetchData }) => {
       <input type="date" name="startDate" onChange={handleChange} className="p-2 border rounded" />
       <input type="date" name="endDate" onChange={handleChange} className="p-2 border rounded" />
       <div className="col-start-6 flex justify-end">
-        <button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700 text-white px-14 py-2 rounded transition"> Search </button>
+        <button onClick={handleSearch} className="bg-red-600 hover:bg-red-700 text-white px-14 py-2 rounded transition"> Search </button>
       </div>
     </div>
   );

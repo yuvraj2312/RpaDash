@@ -266,7 +266,7 @@ function Dashboard() {
                   key={num}
                   onClick={() => setCurrentPage(num)}
                   className={`px-3 py-1 rounded ${
-                    num === currentPage ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                    num === currentPage ? "bg-red-600 text-white" : "bg-gray-200 hover:bg-gray-300"
                   }`}
                 >
                   {num}

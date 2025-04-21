@@ -37,7 +37,7 @@ const AdhocTrigger = () => {
         <div className="flex-1 bg-gray-100 p-8">
           {!showForm ? (
             <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg mt-16">
-              <h1 className="text-3xl font-bold text-center text-blue-900 mb-6">
+              <h1 className="text-3xl font-bold text-center text-blue-800 mb-6">
                 Adhoc Trigger
               </h1>
 
@@ -71,7 +71,7 @@ const AdhocTrigger = () => {
                 <div className="text-center">
                   <button
                     onClick={handleSearch}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+                    className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-700 transition"
                   >
                     Search
                   </button>
@@ -93,7 +93,7 @@ const AdhocTrigger = () => {
                       onClick={() => setCheckType(type)}
                       className={`px-6 py-2 rounded-md border ${
                         checkType === type
-                          ? "bg-blue-600 text-white"
+                          ? "bg-red-600 text-white"
                           : "bg-white text-gray-800"
                       } hover:shadow`}
                     >

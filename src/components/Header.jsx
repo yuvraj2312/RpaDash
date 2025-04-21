@@ -40,43 +40,40 @@ const Header = () => {
       {/* Left Section: Date and Page Title */}
       <div className="flex items-center gap-10">
         {/* Page Title */}
-        <h1 className="text-2xl font-semibold text-gray-800 tracking-wide">
+        <h1 className="text-2xl font-semibold text-[#E40046] tracking-wide">
           {getPageTitle()}
         </h1>
 
         {/* Date */}
-        <div className="text-gray-600 text-base font-medium">{today}</div>
+        <div className="text-gray-500 text-base font-medium">{today}</div>
       </div>
-
 
       {/* Icons */}
       <div className="relative flex items-center gap-4" ref={profileRef}>
-        
-
         {/* User Profile */}
         <div className="relative">
           <button
             onClick={() => setShowProfile(!showProfile)}
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-[#E40046] transition-colors duration-300"
             title="User Profile"
           >
-            <FaUserCircle className="text-2xl text-gray-600" />
+            <FaUserCircle className="text-2xl text-gray-600 hover:text-[#E40046] transition-colors duration-300" />
           </button>
 
           {showProfile && (
-            <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 shadow-lg rounded-md p-4 z-50 animate-fade-in">
-              <h2 className="text-sm font-semibold text-gray-800 mb-3">
+            <div className="absolute right-0 mt-3 w-64 bg-white border border-gray-200 shadow-xl rounded-lg p-4 z-50 animate-fade-in transition-opacity duration-300">
+              <h2 className="text-sm font-semibold text-[#E40046] mb-3">
                 User Profile
               </h2>
               <div className="space-y-2 text-sm text-gray-700">
                 <div>
-                  <span className="font-medium">OLM ID:</span> ABC123
+                  <span className="font-medium text-gray-600">OLM ID:</span> ABC123
                 </div>
                 <div>
-                  <span className="font-medium">Name:</span> Yuvraj Arora
+                  <span className="font-medium text-gray-600">Name:</span> Yuvraj Arora
                 </div>
                 <div>
-                  <span className="font-medium">Email:</span> abc123@airtel.com
+                  <span className="font-medium text-gray-600">Email:</span> abc123@airtel.com
                 </div>
               </div>
             </div>
