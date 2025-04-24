@@ -32,7 +32,7 @@ const Sidebar = () => {
             src={AirtelLogo}
             alt="Airtel Logo"
             className={`object-contain transition-all duration-700 ease-in-out ${
-              isCollapsed ? "h-20 w-20" : "h-14 w-14"
+              isCollapsed ? "h-20 w-20" : "h-20 w-20"
             }`}
           />
           <span

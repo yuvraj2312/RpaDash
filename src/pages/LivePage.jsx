@@ -1,9 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const data = [
   {
@@ -34,11 +37,19 @@ const data = [
 
 const LivePage = () => {
   const tableRef = useRef(null);
+  const calendarRef = useRef(null);
+
   const [copied, setCopied] = useState(false);
   const [filters, setFilters] = useState({
     domain: "",
-    goLive: "",
+    goLiveRange: {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
   });
+
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -46,14 +57,11 @@ const LivePage = () => {
   };
 
   const handleSearch = () => {
-    // You can implement filter logic here
     console.log("Searching with:", filters);
   };
 
   const handleCopy = () => {
-    const text = data
-      .map((row) => Object.values(row).join("\t"))
-      .join("\n");
+    const text = data.map((row) => Object.values(row).join("\t")).join("\n");
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -102,13 +110,25 @@ const LivePage = () => {
     doc.save("LiveData.pdf");
   };
 
+  // Close calendar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setShowCalendar(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
       <div className="flex flex-col flex-1">
         <Header />
         <div className="p-6">
-          {/* Search Inputs Row */}
+          {/* Search Inputs */}
           <div className="flex items-end flex-wrap gap-4 mb-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700">
@@ -124,18 +144,31 @@ const LivePage = () => {
               />
             </div>
 
-        
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">
-                Go Live Date <span className="text-red-500">*</span>
+            {/* Date Range Picker */}
+            <div className="relative" ref={calendarRef}>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Go Live Date Range <span className="text-red-500">*</span>
               </label>
               <input
-                type="date"
-                name="goLive"
-                value={filters.goLive}
-                onChange={handleInputChange}
-                className="border rounded-md px-4 py-2 w-56"
+                type="text"
+                readOnly
+                className="border rounded-md px-4 py-2 w-64 bg-white cursor-pointer"
+                value={`${filters.goLiveRange.startDate.toLocaleDateString()} - ${filters.goLiveRange.endDate.toLocaleDateString()}`}
+                onClick={() => setShowCalendar((prev) => !prev)}
               />
+              {showCalendar && (
+                <div className="absolute z-50 mt-2 shadow-lg border rounded-md bg-white">
+                  <DateRange
+                    editableDateInputs={true}
+                    onChange={(ranges) => {
+                      setFilters({ ...filters, goLiveRange: ranges.selection });
+                      setShowCalendar(false);
+                    }}
+                    moveRangeOnFirstSelection={false}
+                    ranges={[filters.goLiveRange]}
+                  />
+                </div>
+              )}
             </div>
 
             <button
@@ -148,7 +181,7 @@ const LivePage = () => {
 
           {/* Export Buttons */}
           <div className="flex justify-between items-center flex-wrap mb-4">
-            <div className="flex gap-2 flex-wrap ">
+            <div className="flex gap-2 flex-wrap">
               <button
                 onClick={handleCopy}
                 className={`px-4 py-2 rounded-md transition-all duration-300 ${
@@ -166,15 +199,11 @@ const LivePage = () => {
               <button onClick={handleExportPDF} className="bg-rose-400 text-white px-4 py-2 rounded-md hover:bg-rose-500">
                 PDF
               </button>
-
             </div>
             <div className="ml-auto text-lg font-semibold text-gray-700">
-                Total Live Processes: {data.length}
+              Total Live Processes: {data.length}
             </div>
           </div>
-            
-
-          
 
           {/* Table */}
           <div className="overflow-x-auto bg-white rounded-lg shadow">
